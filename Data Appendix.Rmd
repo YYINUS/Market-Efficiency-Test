@@ -1,0 +1,135 @@
+---
+title: "Data Appendix"
+author: "YIXIAO XIE and YEYUXI YI"
+date: "December 14, 2023"
+output: pdf_document
+professor: Dr. Michael O'Hara
+header-includes: \usepackage{setspace}\doublespacing
+course: ECON 342 01 Econometrics
+---
+```{r include = FALSE, echo = FALSE}
+
+rm(list = ls())
+
+
+library(dplyr)
+library(ggplot2)
+library(stargazer)
+library(readr)
+library(dagitty)
+library(ggdag)
+library(car)
+library(knitr)
+```
+
+```{r echo = FALSE}
+StockNewsData <- read.csv2("StockNewsData.csv", header = TRUE, na.strings="")
+```
+
+The following data summarizes the properties of the collected data and variables. All data is from either the Bloomberg or Yahoo finance. There is total 161 observation. 
+
+
+```{r echo = FALSE}
+stargazer(as.data.frame(StockNewsData), type = "text", header = FALSE, keep.stat = c("n", "rsq"), title = "Table 1: Summary Statistics")
+```
+
+
+D1~20: Return of a stock on Day 1~20 of earning report release
+M1~20: Return of the market on Day 1~20 of earning report release
+Beta:the linear relationship of the stock related to the market based on historical data
+Dnews – News Categories --- Extremely Bad/Bad/No News/Good/Extremely Good
+
+Now we want to see the stock return's normal distribution.
+```{r echo = FALSE}
+ggplot(StockNewsData,aes(x = D1))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = D2))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = D3))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = D5))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = D10))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = D20))+
+  geom_histogram()
+
+```
+
+
+Now we want to see the market return's normal distribution
+```{r echo = FALSE}
+ggplot(StockNewsData,aes(x = M1*Beta))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = M2*Beta))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = M3*Beta))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = M5*Beta))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = M10*Beta))+
+  geom_histogram()
+
+ggplot(StockNewsData,aes(x = M20*Beta))+
+  geom_histogram()
+```
+
+Under different news categories whether the stock return is distributed or not
+```{r echo = FALSE}
+ggplot(StockNewsData,aes(y = Dnews,x = D1))+
+  geom_point()
+
+ggplot(StockNewsData,aes(y = Dnews,x = D2))+
+  geom_point()
+
+ggplot(StockNewsData,aes(y = Dnews,x = D3))+
+  geom_point()
+
+ggplot(StockNewsData,aes(y = Dnews,x = D5))+
+  geom_point()
+
+ggplot(StockNewsData,aes(y = Dnews,x = D10))+
+  geom_point()
+
+ggplot(StockNewsData,aes(y = Dnews,x = D20))+
+  geom_point()
+```
+
+Whether there is a linear relationship between stock return and market return. 
+
+```{r echo = FALSE}
+ggplot(StockNewsData,aes(y = D1,x = M1*Beta))+
+  geom_point()
+ggplot(StockNewsData,aes(y = D2,x = M2*Beta))+
+  geom_point()
+ggplot(StockNewsData,aes(y = D3,x = M3*Beta))+
+  geom_point()
+ggplot(StockNewsData,aes(y = D5,x = M5*Beta))+
+  geom_point()
+ggplot(StockNewsData,aes(y = D10,x = M10*Beta))+
+  geom_point()
+ggplot(StockNewsData,aes(y = D20,x = M20*Beta))+
+  geom_point()
+```
+
+
+
+
+
+
+
+
+
+
+
+
+

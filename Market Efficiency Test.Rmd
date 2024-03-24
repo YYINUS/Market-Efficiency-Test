@@ -1,0 +1,100 @@
+---
+title: "Market efficiency hypothesis on the announcement of earning reports with empirical evidence from S&P600 small cap"
+author: "YEYUXI YI and YIXIAO XIE"
+date: "December 14, 2023"
+output: pdf_document
+professor: Dr. Michael O'Hara
+header-includes: \usepackage{setspace}\doublespacing
+---
+
+\newpage
+
+## Abstract
+This study examines the efficiency of the stock market following earnings report announcements, using the evidence from S&P 600 small-cap index in 2023. Utilizing data from Bloomberg and Yahoo Finance, we analyzed quarterly earnings reports and Zacks consensus estimates for approximately 99 companies. Our methodology classified these reports as extremely good, good, bad, extremely bad or no news based on year-over-year revenue comparisons and market expectations comparisons from Zacks consensus. The study aims to understand the market's responsiveness by tracking stock and market returns at various days post-earnings announcement (Day 1, 2, 3, 5, 10, and 20). This research finds that The market is efficient after day 2 of the annoucement. Bad news and extremely bad news have significant impact on the return of the stock on day 1 related to no news and good news and extremely good news have significant impact on the return of the stock on day 2 related to no news.
+
+JEL Codes: G11 (Investment Decisions), G14 (Information and Market Efficiency), G17 (Financial Forecasting and Simulation)
+Keywords: OLS, Dummy, News Categories, Earning reports, Market Efficiency Hypothesis
+
+```{r include = FALSE, echo=FALSE}
+
+rm(list = ls())
+
+library(dplyr)
+library(ggplot2)
+library(stargazer)
+library(readr)
+library(dagitty)
+library(ggdag)
+library(car)
+library(knitr)
+```
+
+\newpage
+## Introduction:
+In the quest to demystify the dynamics of the stock market, this research delves into a critical question: "How long does it take for the stock market to become efficient following the announcement of earnings reports". As a retail trader who read news regularly, one may always wonder should they buy the stock based on the news related to the company. Soon their second thoughts will be should they actually buy it or it is too late since the Market Efficiency Hypothesis states that the share price includes all the public information including news. Hence, this investigation is driven by a retail trader's curiosity about the Market Efficiency Hypothesis in the context of modern stock markets, where share prices are presumed to embody all available information. Particularly, it zeroes in on the performance of small companies, a segment often overshadowed by larger counterparts but crucial for a holistic understanding of market behaviors. This study aims to shed light on the speed and efficacy with which the small-cap sector of the stock market assimilates and reflects the financial disclosures in earnings reports, offering a nuanced perspective on market efficiency and investor response in this less explored domain.	
+
+```{r message = FALSE, warning=FALSE, echo=FALSE}
+StockNewsData <- read.csv2("StockNewsData.csv", header = TRUE, na.strings="")
+```
+
+## Literature Review:
+The literature review for this study intertwines seminal works to build a comprehensive understanding of stock market responses to earnings announcements. Harrington(1983) establishes beta as a pivotal metric for assessing stock volatility against market indices, rooted in the Capital Asset Pricing Model (CAPM). This foundational concept helps in understanding the risk-return relationship, serving as a control variable in our study. Chenxi Wang and Gerky King Phet's 2012 study, "Stock Return Performance around Earnings Announcements: Empirical Evidence from Nordic Stock Market," further enriches the analysis by categorizing earnings changes and surprises. This categorization, based on EPS comparisons with previous years and analysts' forecasts, helps determine the nature of earnings news, forming the basis of our independent variable. Lastly, Syed(2018)'s study on Saudi Arabia's market efficiency in response to earnings announcements offers a methodological benchmark. By using the event study approach, it underscores the importance of analyzing immediate market reactions to earnings disclosures. Collectively, these studies not only guide our methodological framework but also validate the relevance of beta and earnings surprises as critical elements in understanding market efficiency and investor behavior following earnings announcements.
+
+## Research Question:
+How long does it take for the stock market to become efficient following the announcement of earnings reports?
+
+## Method:
+To answer the research questions, we need to run OLS regression to exam the impact of the announcement of earning reports on the return of stocks on different days after the announcement. To consider the impact brought by the market to the stock’s return, we also incorporate the market return, which is the return of S&P500, and beta in our model so that the result can reflect the impact of news, controlling the effect of the market. 
+
+Hence, we run the models:
+
+D1 = $\beta_0$ + $\beta_1 M1*Beta$ + $\beta_2 Dnews$
+
+D2 = $\beta_0$ + $\beta_1 M2*Beta$ + $\beta_2 Dnews$
+
+D3 = $\beta_0$ + $\beta_1 M3*Beta$ + $\beta_2 Dnews$
+
+D5 = $\beta_0$ + $\beta_1 M5*Beta$ + $\beta_2 Dnews$
+
+D10 = $\beta_0$ + $\beta_1 M10*Beta$ + $\beta_2 Dnews$
+
+D20 = $\beta_0$ + $\beta_1 M20*Beta$ + $\beta_2 Dnews$
+
+Since news is a dummy variable, during the OLS regression, we set the reference category of news as No news. If the t-test for slope results any of the news categories is significant at 5% level related to No news, we can draw the conclusion that the announcement of earning reports of that specific category has an impact on the result of the stock on that day. Hence, the market is not efficient as the the public information still affects the price. Otherwise, we draw the conclusion that the market is efficient.
+
+# Data:
+Our data collection process involved Bloomberg and Yahoo Finance. We initially randomly selected 120 companies from the S&P 600, with data sourced from Wikiwand. We then examined these companies' quarterly earnings reports for 2023 and their corresponding Zacks consensus on the release day. Zacks consensus is an average of estimates from sell-side analysts, creating a consensus EPS estimate. We analyzed these reports to classify them as good or bad news, based on revenue comparison with the same quarter in the previous year. Additionally, we assessed whether the earnings met or surpassed market expectations according to the Zacks consensus. With some failures to identify the news catergories(cannot find companies' market expectation on Zacks), We have 99 companies with 161 observations in our final dataset. Using Bloomberg, we tracked the stock returns and market returns on Day 1, 2, 3, 5, 10, and 20 following the earnings report release, aiming to evaluate market response and efficiency.
+
+```{r echo = FALSE, results="asis"}
+stargazer(as.data.frame(StockNewsData), header = FALSE, keep.stat = c("n", "rsq"), title = "Table 1: Summary Statistics")
+boxplot(StockNewsData$D1~StockNewsData$Dnews)
+boxplot(StockNewsData$D20~StockNewsData$Dnews)
+```
+
+
+# Results
+
+We run OLS regression on D1, D2, D3, D5, D10, D20 and have six models in total.We examine the significance of each new catergories on different days. Since on Day 1 of earning reports release, Bad news and extremely bad news are significant predictor for D1, we conclude that Bad news and extremely bad news have significant impact on the return of the stock on Day 1 related to no news and the market is not efficient on Day1 as the price of stocks is affected by the public information --- earning reports. Since on Day 2 of earning reports release, Good news and extremely good news are significant predictor for D2,we conclude that good news and extremely good news have significant impact on the return of the stock on Day 2 related to no news and the market is not efficient on Day 2 as the price of stocks is affected by the public information.Since for the rest of days, there is no news category is a significant predictor for the return of the stock, we conclude that the market is efficient after day 2 as price of stocks is not affected by the public information.
+
+\newpage
+```{r echo=FALSE, message=FALSE, warning=FALSE, results = "asis"}
+StockNewsData$Dnews <- factor(StockNewsData$Dnews)
+StockNewsData$Dnews <- relevel(StockNewsData$Dnews, ref = "NA")
+
+mod1  = lm(D1~I(M1*Beta)+ Dnews, data = StockNewsData)
+mod2  = lm(D2~I(M2*Beta)+ Dnews, data = StockNewsData)
+mod3  = lm(D3~I(M3*Beta)+ Dnews, data = StockNewsData)
+mod5  = lm(D5~I(M5*Beta)+ Dnews, data = StockNewsData)
+mod10  = lm(D10~I(M10*Beta)+ Dnews, data = StockNewsData)
+mod20  = lm(D20~I(M20*Beta)+ Dnews, data = StockNewsData)
+
+stargazer(mod1,mod2,mod3,mod5,mod10,mod20,header =FALSE,font.size = "small",column.sep.width = "-15pt", keep.stat = c("n","rsq"))
+```
+\newpage
+# Reference:
+Wang, C., & Phet, G. K. (2012). Stock return performance around earnings announcements. Master's Thesis, Umeå School of Business and Economics, Umeå University. Supervisor: Janne Äijö. Defense Date: June 8, 2012.
+
+Harrington, D. R. (1983, May). Stock Prices, Beta, and Strategic Planning. Harvard business review . https://hbr.org/1983/05/stock-prices-beta-and-strategic-planning 
+
+Syed, A.M., & Bajwa, I.A. (2018). Earnings announcements, stock price reaction and market efficiency – the case of Saudi Arabia. International Journal of Islamic and Middle Eastern Finance and Management, 11(3), 416-431. https://doi.org/10.1108/IMEFM-02-2017-0044
+
